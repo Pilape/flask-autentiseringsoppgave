@@ -3,7 +3,7 @@
 
 # TODO: Lagring av brukerdata - Ser på det imorgen
 
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, session
 from user import User
 from pprint import pprint
 
@@ -11,10 +11,16 @@ from pprint import pprint
 users = {} # Type {[str, User]}
 
 app = Flask(__name__)
+app.secret_key = "3hfdsajfhskruk"
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+@app.route("/log-out")
+def log_out():
+    session.clear()
+    return redirect("/")
 
 @app.route("/register")
 def get_register():
@@ -23,22 +29,31 @@ def get_register():
 
 @app.route("/register", methods=["POST"])
 def post_register():
-    form_data = request.form.to_dict()
-    username = form_data.get("username")
-    password = form_data.get("password")
+    user = User(**request.form)
 
     # TODO: Hvis bruker allerede eksisterer...?
     # TODO: Hvis brukernavn / passord er tomt??
 
-    users[username.lower()] = User(username, password)
+    users[user.username.lower()] = user
+    session["user"] = user
+    session["logged_in"] = True
     pprint(users)
     return redirect("/")
 
-@app.route("/login", methods=["POST"])
+@app.route("/log-in")
+def get_login():
+    return render_template("login.html")
+
+@app.route("/log-in", methods=["POST"])
 def post_login():
-    username = request.form.get("username")
-    if username.lower() in users:
-        ... # ? ;)
+    user = users.get(request.form.get("username").lower(), False)
+    if not user or not user.check_password(request.form.get("password")):
+        return render_template("login.html",
+                               error_msg="Feil brukernavn eller passord.",
+                               form=request.form)
+    session["user"] = user
+    session["logged_in"] = True
+    return redirect("/")
 
 # Dev mode:
 if __name__ == "__main__":
