@@ -5,7 +5,6 @@
 
 from flask import Flask, render_template, request, redirect, session
 from user import User
-from pprint import pprint
 
 # Temporary (RAM lagring)
 users = {} # Type {[str, User]}
@@ -55,6 +54,9 @@ def post_login():
     session["logged_in"] = True
     return redirect("/")
 
+def run(debug: bool):
+    app.run(debug=debug)
+
 # Dev mode:
 if __name__ == "__main__":
-    app.run(debug=True)
+    run(debug=True)

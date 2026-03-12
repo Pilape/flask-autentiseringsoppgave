@@ -4,7 +4,7 @@ Hvordan kjøre:
 
 ```python
 pip install -r requirements.txt
-python run.py
+python src/run.py
 ```
 
 ## Hosting
