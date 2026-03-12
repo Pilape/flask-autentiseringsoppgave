@@ -1,4 +1,4 @@
-# Flask Autentiserings Eksempel
+# Flask Autentiserings Eksempel :)
 
 Hvordan kjøre:
 
